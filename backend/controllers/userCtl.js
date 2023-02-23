@@ -1,5 +1,20 @@
 const User = require('../models/user');
 
+
+
+
+async function getUser(req, res) {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        res.status(201).json({user, message: `Found one user with id ${userId}`});
+    } catch (error) {
+        res.json({message: error.message});
+    }
+}
+
+
+
 async function getUsers(req, res) {
     try {
         const users = await User.find();
@@ -60,5 +75,6 @@ module.exports = {
     getUsers,
     createUser, 
     deleteUser, 
-    updateUser 
+    updateUser,
+    getUser
 };

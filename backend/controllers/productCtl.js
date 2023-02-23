@@ -1,6 +1,16 @@
 const Product = require('../models/product');
 
 
+async function getProduct(req, res) {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+        res.status(201).json({product, message: `Found one product with id ${productId}`});
+    } catch (error) {
+        return res.json({message: error.message});
+    }
+}
+
 
 async function getProducts(req, res) {
     try {
@@ -52,6 +62,7 @@ async function updateProduct(req, res) {
 }
 
 module.exports = { 
+    getProduct,
     getProducts,
     createProduct,
     deleteProduct,
