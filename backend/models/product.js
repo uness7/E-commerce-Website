@@ -4,19 +4,33 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema(
     
     {
-        "name": String,
-        "description": String,
-        "price": Number,
-        "created": {
+        "name": {
+            type: String,
+            required: true
+        },
+        "description": {
+            type: String,
+            required: true
+        },
+        "price": {
+            type: Number,
+            required: true
+        },
+        "createdAt": {
             type: Date,
             default: Date.now
         },
-        "updated": {
+        "users": [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ],
+        "updatedAt": {
             type: Date,
             default: Date.now
-        },
+        }
     }
-
 );
 
 module.exports = mongoose.model('Product', productSchema);

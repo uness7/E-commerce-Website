@@ -31,7 +31,13 @@ async function createUser(req, res) {
             {
                 name: req.body.name,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                address: req.body.address,
+                payment_info: req.body.payment_info,
+                cart: req.body.cart,
+                orders: req.body.orders,
+                created_at: req.body.created_at,
+                updated_at: req.body.updated_at
             }
         );
         res.status(201).json({

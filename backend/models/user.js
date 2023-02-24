@@ -16,9 +16,34 @@ const userSchema = new Schema({
     required: true
   },
   address: {
-    type: String,
-    default: "Not provided"
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+    // default: "Not provided" // errore has occurred after adding this line
   },
+  payment_info: {
+    card_number: String,
+    expiration_date: String,
+    cvv: String
+  },
+  cart: [{
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    },
+    quantity: {
+      type: Number,
+      default: 1
+    }
+  }],
+  orders: [{
+    order: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Order'
+    },
+    status: String
+  }],
   created_at: {
     type: Date,
     default: Date.now

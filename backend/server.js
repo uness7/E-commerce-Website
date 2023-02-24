@@ -9,12 +9,13 @@ const mongoose =  require('mongoose');
 
 const productRouter = require('./routes/product');
 const userRouter = require('./routes/user');
-
+const orderRouter = require('./routes/order');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
+// DB connection
 connectDB();
 const db = mongoose.connection;
 
@@ -27,8 +28,25 @@ db.once('open', ()=> {
 });
 
 
+
+
+
+
+
+// Routes 
 app.use('/products', productRouter);
 app.use('/users', userRouter);
+app.use('/orders', orderRouter);
+
+
+
+
+
+
+
+
+
+
 
 server.listen(8080, () => {
     console.log("SERVER RUNNING ON PORT 8080");

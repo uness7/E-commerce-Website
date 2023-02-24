@@ -29,7 +29,10 @@ async function createProduct(req, res) {
             {
                 name: req.body.name,
                 description: req.body.description,
-                price: req.body.price
+                price: req.body.price,
+                users: req.body.users,
+                updatedAt: req.body.updateProduct,
+                createdAt: req.body.createdAt
             }
         );   
         res.status(201).json({message: `product with id: ${productId} has been created`});
