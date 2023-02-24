@@ -1,15 +1,15 @@
 const User = require('../models/user');
-const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
-// Needs checking
 async function getMe(req, res) {
     try {
-        const { name, email, password} = req.body;
-        const me = User.find({email});
-        res.status(201).json(me);
+        const { 
+            name, 
+            email, 
+            password
+        } = await User.findById(req.user.id);
+        res.status(200).json({name, email, password});
     } catch (error) {
         res.json({message: error.message});
     }
@@ -114,11 +114,24 @@ async function loginUser(req, res) {
     try {
         const user = await User.findOne({email});
         if (user && ( bcrypt.compare(password, user.password) ) ) {
-            res.status(201).json({ message: `Welcome back ${user.name}`});
+            res.status(201).json(
+                {
+                    message: `Welcome back`,
+                    token: generateToken(user._id)
+                }
+            );
         }
     } catch (error) {
          res.status(400).json({ message: error.message });
     }
+}
+
+// Generete jwt
+
+function generateToken(id) {  
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn: '30d'
+    });
 }
 
 module.exports = { 
