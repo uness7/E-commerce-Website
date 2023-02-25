@@ -6,6 +6,11 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  user_role: {
+    type: String,
+    required: true,
+    default: 'user'
+  },
   email: {
     type: String,
     required: true,
@@ -29,7 +34,7 @@ const userSchema = new Schema({
   },
   cart: [{
     product: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'Product'
     },
     quantity: {
@@ -39,10 +44,17 @@ const userSchema = new Schema({
   }],
   orders: [{
     order: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'Order'
     },
-    status: String
+    quantity: {
+      type: Number,
+      default: 1
+    },
+    status: {
+      type: String,
+      default: "NOT DELIVERD YET"
+    }
   }],
   created_at: {
     type: Date,

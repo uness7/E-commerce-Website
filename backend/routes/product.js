@@ -22,4 +22,7 @@ router.delete('/product/:id', deleteProduct);
 // access: private
 router.put('/product/:id', updateProduct);
 
+
+
+
 module.exports = router;

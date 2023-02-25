@@ -1,72 +1,104 @@
 const Order = require('../models/order');
+const User = require('../models/user');
 
-// In this order file we are using exec() method to avoid like-promise error
 
-async function getOrder(req, res) {
+/*
+
+    User can add a product to his cart, and delete a product from his cart
+
+*/
+
+
+// working
+const addCart = async (req, res) => {
     try {
-        const orderId = req.params.id;
-        const order = await Order.findById(orderId);
-        res.status(201).json(order);
+        const user = req.user;
+        const userId = req.user.id;
+        const product = req.body.product;
+        const quantity = req.body.quantity;
+        const { name, cart } = await User.findById(userId);
+        user.cart.push( 
+            { 
+                product: product, 
+                quantity:  quantity
+            } 
+        );
+        user.save();
+        res.status(201).json({ message: `${name} product has been added to your cart.`});
+
+    } catch (error) {
+        res.json({message: error.message});
+    }
+}
+
+// working
+const deleteCart = async (req, res) => {
+    try {
+        const user = req.user;
+        const userId = req.user.id;
+        const productId = req.body.product; // it's a string
+        
+
+        const { cart } = await User.findById(userId);
+
+
+        // Getting the index of the product to be deleted
+        const index = cart.findIndex(obj => { 
+            return obj.product === productId }
+        );        
+
+        if (index !== -1) {
+            user.cart.splice(index, 1);
+        }
+
+        user.save();
+        res.status(201).json(productId);
     } catch (error) {
         res.json({message: error.message});
     }
 }
 
 
-async function getOrders(req, res) {
+// status: working
+const createOrder = async (req, res) => {
     try {
-        const orders = await Order.find(); // .exec() doesn't work properly in here!!
-        res.status(201).json(orders);
-    } catch (error) {
-        res.json({message: error.message});
-    }
-}
+        const user = req.user;
+        const userId = req.user.id;
 
-async function createOrder(req, res) {
-    try {
-        const orderCreateId = req.params.id;
-        const orderCreated = await Order.create({
-            user: req.body.user,
-            items: req.body.items,
-            shippingAddress: req.body.shippingAddress,
-            billingAddress: req.body.billingAddress,
-            total: req.body.total,
-            status: req.body.status,
-            createdAt: req.body.createdAt,
-            updatedAt: req.body.updatedAt
+        const product = req.body.product;
+        const quantity = req.body.quantity;
+
+        const { name, orders } = await User.findById(userId);
+
+        const order = await Order.create({
+            user: req.user.id,
+            items: req.body.items
         });
-        res.status(201).json(
-            {   
-                orderCreated,
-                message: `One order of id ${orderCreateId} has been created successfully. Go to your cart to modify your orders`
+
+
+        user.orders.push(
+            {
+                "product": product,
+                "quantity": quantity
             }
         );
+
+        user.save();
+        
+        res.json({
+            message: `${name} your product have been added to your order list`,
+            order
+        });
     } catch (error) {
         res.json({message: error.message});
     }
 }
-
-
-function deleteOrder(req,res) {
-    try {
-        const deleteOrderId = req.params.id;
-        Order.findByIdAndDelete(deleteOrderId).exec();
-        res.status(201)
-        .json({message: `Order has been deleted successfully`});
-    } catch (error) {
-        res.json({message: error.message});        
-    }
-}
-
-
-
 
 
 
 
 module.exports = {
-    getOrders, 
-    createOrder, 
-    deleteOrder,  
-    getOrder 
+    addCart,
+    deleteCart,
+    createOrder
 };

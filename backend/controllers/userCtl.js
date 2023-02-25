@@ -2,6 +2,29 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+
+
+// access: users
+// status: working 
+// user can access his orders
+async function getUserOrders(req, res) {
+    try {
+        const userId = req.user.id;
+        const { name, orders } = await User.findById(userId);
+        if(orders.length === 0) {
+            return res.json({message: `${name} you have no orders yet! Go to dashboard and choose your products`});
+        }
+    } catch (error) {
+        res.json({message: error.message});
+    }
+}
+
+
+
+
+// access: users
+// status: working 
+// user can access his account
 async function getMe(req, res) {
     try {
         const { 
@@ -17,18 +40,8 @@ async function getMe(req, res) {
 
 
 
-async function getUser(req, res) {
-    try {
-        const userId = req.params.id;
-        const user = await User.findById(userId);
-        res.status(201).json({user, message: `Found one user with id ${user.id}`});
-    } catch (error) {
-        res.json({message: error.message});
-    }
-}
-
-
-
+// access for: admin
+// status: working 
 async function getUsers(req, res) {
     try {
         const users = await User.find();
@@ -36,18 +49,12 @@ async function getUsers(req, res) {
     } catch (error) {
         res.json({message: error.message});
     }
-    
 }
+
+// access: user
+// status: working
 async function registerUser(req, res) {
     const { name, email, password } = req.body;
-
-
-    // needs an arrow function to use asyncHandler 
-    // if (!name || !email || !password) {
-    //     res.status(400);
-    //     throw new Error("Please add all the fields");
-    // }
-
     const userExists = await User.findOne({email});
     if(userExists) {
         return res.status(400).json({message: 'User already exists'});
@@ -62,6 +69,7 @@ async function registerUser(req, res) {
                 name: name,
                 email: email,
                 password: hashedPassword,
+                user_role: req.body.user_role,
                 address: req.body.address,
                 payment_info: req.body.payment_info,
                 cart: req.body.cart,
@@ -80,24 +88,26 @@ async function registerUser(req, res) {
 }
 
 
-
+// access for: users
+// status: working
 async function deleteUser(req,res) { 
     try {
-        const userDeleteId = req.params.id;
+        const userDeleteId = req.user.id;
         await User.findByIdAndDelete(userDeleteId);
         res.status(201).json(`User with id of ${userDeleteId} has been deleted`);
     } catch (error) {
         res.json({message: error.message});
     }
-    
 }
 
 
 
-
+// access for: users
+// status: working
+// user can update his credentials
 async function updateUser(req, res) {
     try {
-        const updateUserId = req.params.id;
+        const updateUserId = req.user.id;
         const updatedUser = await User.findByIdAndUpdate(updateUserId, req.body, { new: true });
         res.status(201).json({
             updatedUser,
@@ -108,7 +118,8 @@ async function updateUser(req, res) {
     }
 }
 
-
+// access for: users 
+// status: working
 async function loginUser(req, res) {
     const { email, password } = req.body;
     try {
@@ -120,6 +131,8 @@ async function loginUser(req, res) {
                     token: generateToken(user._id)
                 }
             );
+        }else{
+            res.json("NO Account with these credentials. Please Register First");
         }
     } catch (error) {
          res.status(400).json({ message: error.message });
@@ -127,7 +140,6 @@ async function loginUser(req, res) {
 }
 
 // Generete jwt
-
 function generateToken(id) {  
     return jwt.sign({id}, process.env.JWT_SECRET, {
         expiresIn: '30d'
@@ -139,7 +151,7 @@ module.exports = {
     registerUser, 
     deleteUser, 
     updateUser,
-    getUser,
     getMe,
-    loginUser
+    loginUser,
+    getUserOrders
 };
