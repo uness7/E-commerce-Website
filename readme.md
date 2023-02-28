@@ -1,4 +1,4 @@
-#E-commerce website using MERN stack
+# E-commerce website using MERN stack
 This is a web application for an e-commerce website built using MERN stack (MongoDB, Express, React, and Node.js). The website allows users to browse and purchase products, add items to a cart. (I haven't worked on checkout process, I'd probably use stripe for that). The admin can add, update and delete products and manage orders.
 
 # Features
