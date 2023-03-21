@@ -19,7 +19,7 @@ Order management for admins with the ability to mark orders as shipped and view 
 ## Getting started
 To run the application locally, follow these steps:
 
-# Clone the repository: git clone https://github.com/uness7/E-commerce-Website-from-scratch---MERN-STACK.git
+# Clone the repository: git clone https://github.com/uness7/E-commerce-Website.git
 
 # Install dependencies for the server: cd server && npm install
 Create a .env file in the server directory with the following environment 
